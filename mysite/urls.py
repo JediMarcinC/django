@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^login/$', aviews.login, name='login'),
     url(r'^logout/$', aviews.logout, name='logout'),
-    url(r'^b/', include("blog.urls"))
+    url(r'^b/', include("blog.urls", namespace='posts') )
 ]

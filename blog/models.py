@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.urlresolvers import reverse
 
 class Post(models.Model):
     author = models.ForeignKey('auth.User')
@@ -22,4 +23,5 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return "b/{}/".format(self.id)
+        # return "b/{}/".format(self.id)
+        return reverse('posts:detail', kwargs={'id': self.id})

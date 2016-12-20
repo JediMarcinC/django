@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+{% for obj in objects %}
+<!--<h2><a href="{% url 'detail' id=obj.id %}">{{ obj.title }}</a></h2>-->
+<h2><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></h2>
+<h3>{{ obj.author }}</h3>
+
+{% endfor %}
+
+</body>
+</html>

@@ -1,16 +1,52 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Index</title>
-</head>
-<body>
-{% for obj in objects %}
-<!--<h2><a href="{% url 'posts:detail' id=obj.id %}">{{ obj.title }}</a></h2>-->
-<h2><a href="{{ obj.get_absolute_url }}">{{ obj.title }}</a></h2>
-<h3>{{ obj.author }}</h3>
+{% extends "blog/base.html" %}
+{% block title %} Index {% endblock %}
 
-{% endfor %}
+{% block content %}
+<div class="col-sm-12 col-sm-offset-2">
+<div class="row">
+    {% for obj in objects %}
 
-</body>
-</html>
+    <div class="col-sm-3">
+        <!--<h2><a href="{% url 'posts:detail' id=obj.id %}">{{ obj.title }}</a></h2>-->
+        <div class="thumbnail">
+            {% if obj.image %}
+            <img src="{{ obj.image.url }}" class="image-responsive" style="max-height:150px">
+            {% endif %}
+            <div class="caption">
+                <h2>
+                    <a href="">{{ obj.title }}</a>
+                    <small>{{ obj.created_date | timesince }} ago</small>
+                </h2>
+                <h4><b>{{ obj.author }}</b></h4>
+                <h3>{{ obj.text | truncatechars:40 }}</h3>
+                <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a>
+                    <a href="{% url 'posts:edit' id=obj.id %}" class="btn btn-warning" role="button">Edit</a>
+                    <a href="{% url 'posts:delete' id=obj.id %}" class="btn btn-danger" role="button">Delete</a></p>
+            </div>
+        </div>
+    </div>
+    {% cycle '' '<div class="col-sm-12"><hr></div></div><div class="row">' %}
+    {% endfor %}
+</div>
+<div class="pagination">
+    <span class="step-links">
+        {% if objects.has_previous %}
+            <a href="?page={{ objects.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ objects.number }} of {{ objects.paginator.num_pages }}.
+        </span>
+
+        {% if objects.has_next %}
+            <a href="?page={{ objects.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+
+</div>
+
+
+
+
+{% endblock %}

@@ -1,15 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Object</title>
-</head>
-<body>
+{% extends "blog/base.html" %}
+{% block title %} Object details {% endblock %}
 
+
+{% block content %}
+<div class="col-sm-7 col-sm-offset-3">
 <h1>{{ obj.title }}</h1>
 <h3>{{ obj.author }}</h3>
-<p>{{ obj.text }}</p>
-<p style="font-style: italic">{{ obj.created_date }}</p>
-
-</body>
-</html>
+<img src="{{ obj.image.url }}" class="img-responsive" style="max-height:800px">
+<p>{{ obj.text | linebreaks}}</p>
+<p style="font-style: italic">{{ obj.created_date}}</p>
+</div>
+{% endblock %}

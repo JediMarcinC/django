@@ -1,13 +1,42 @@
 {% extends "blog/base.html" %}
-{% block title %} Object details {% endblock %}
+{% load urlify %}
 
+{% block title %} Object details {% endblock %}
 
 {% block content %}
 <div class="col-sm-7 col-sm-offset-3">
-<h1>{{ obj.title }}</h1>
-<h3>{{ obj.author }}</h3>
-<img src="{{ obj.image.url }}" class="img-responsive" style="max-height:800px">
-<p>{{ obj.text | linebreaks}}</p>
-<p style="font-style: italic">{{ obj.created_date}}</p>
+    <h1>{{ obj.title }}</h1>
+    <h3>
+        {% if obj.author.get_full_name %}
+            {{ obj.author.get_full_name }}
+        {% else %}
+            {{ obj.author }}
+        {% endif %} </h3>
+
+    <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/"
+         data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+
+    <img src="{{ obj.image.url }}" class="img-responsive" style="max-height:600px">
+    <p>{{ obj.text | linebreaks}}</p>
+    <p style="font-style: italic">{{ obj.created_date}}</p>
+
+
+
+
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
+    Facebook
+    </a>
+
+    <a href="https://twitter.com/home?status={{ obj.text|urlify }}%20{{ request.build_absolute_uri }}">
+    Twitter
+    </a>
+
+    <a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'>Google+</a>
+
+    <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}
+    &title={{ obj.title }}&summary={{ share_string }}&source=http://swiftforentrepreneurs.com/">
+    Linkedin
+    </a>
+        <div class="fb-comments" data-href={{ request.build_absolute_uri }} data-numposts="5"></div>
 </div>
 {% endblock %}

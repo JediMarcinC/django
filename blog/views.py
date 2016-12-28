@@ -2,10 +2,11 @@ from .models import Post
 from .forms import PostForm
 
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from urllib.parse import quote_plus
 
 
 def s(request):
@@ -28,26 +29,28 @@ def index(rqst):
     except EmptyPage:  # If page is out of range (e.g. 9999), deliver last page of results.
         posts = paginator.page(paginator.num_pages)
 
-    return render(rqst, 'blog/index.html', {'objects': posts})
+    return render(rqst, 'blog/index.html', {'objects': posts, 'user':rqst.user})
 
 
-def detail(rq, id):
+def detail(rq, slug=None):
     # object = Post.objects.get(id=id)
-    object = get_object_or_404(Post, id=id)
-    return render(rq, 'blog/detail.html', {'obj': object})
+    object = get_object_or_404(Post, slug=slug)
+    share_string = quote_plus(object.text)
+    return render(rq, 'blog/detail.html', {'obj': object, 'share_string': share_string})
 
 def create_post(rqst):
+    if not rqst.user.is_staff and not rqst.user.is_superuser:
+        raise Http404
     form = PostForm(rqst.POST or None, rqst.FILES or None)
     context = {
         'form': form
     }
     if form.is_valid():
         inst = form.save(commit=False)
+        inst.user = rqst.user
         inst.save()
         messages.success(rqst, 'Succesfully created! Congratulations!')
         return HttpResponseRedirect(inst.get_absolute_url())
-    else:
-        messages.error(rqst, "Unfortunately entry couldn't be created")
     return render(rqst, 'blog/postform.html', context)
 
 def update(request, id):

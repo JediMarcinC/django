@@ -4,10 +4,13 @@
 {% block content %}
 <div class="col-sm-12 col-sm-offset-2">
 <div class="row">
+    <div>
+        <h5>{{user}}</h5>
+        <h5>{{user.is_staff}}</h5>
+    </div>
     {% for obj in objects %}
 
     <div class="col-sm-3">
-        <!--<h2><a href="{% url 'posts:detail' id=obj.id %}">{{ obj.title }}</a></h2>-->
         <div class="thumbnail">
             {% if obj.image %}
             <img src="{{ obj.image.url }}" class="image-responsive" style="max-height:150px">
@@ -17,11 +20,19 @@
                     <a href="">{{ obj.title }}</a>
                     <small>{{ obj.created_date | timesince }} ago</small>
                 </h2>
-                <h4><b>{{ obj.author }}</b></h4>
-                <h3>{{ obj.text | truncatechars:40 }}</h3>
+                <h4><b> {% if obj.author.get_full_name %}
+                            {{ obj.author.get_full_name }}
+                        {% else %}
+                            {{ obj.author }}
+                        {% endif %}</b></h4>
+                <h5>{{user}} *** {{obj.author}}</h5>
+        <h5>{{user.is_staff}} *** {{obj.author.is_staff}}</h5>
+                <h5> staff: {{ obj.author.is_staff }}</h5>
+                <h5> admin: {{ obj.author.is_superuser }}</h5>
+                <h3>{{ obj.text | truncatechars:30 }}</h3>
                 <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a>
-                    <a href="{% url 'posts:edit' id=obj.id %}" class="btn btn-warning" role="button">Edit</a>
-                    <a href="{% url 'posts:delete' id=obj.id %}" class="btn btn-danger" role="button">Delete</a></p>
+                    <a href="{% url 'posts:edit' slug=obj.slug %}" class="btn btn-warning" role="button">Edit</a>
+                    <a href="{% url 'posts:delete' slug=obj.slug %}" class="btn btn-danger" role="button">Delete</a></p>
             </div>
         </div>
     </div>

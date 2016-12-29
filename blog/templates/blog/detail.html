@@ -18,7 +18,11 @@
 
     <img src="{{ obj.image.url }}" class="img-responsive" style="max-height:600px">
     <p>{{ obj.text | linebreaks}}</p>
-    <p style="font-style: italic">{{ obj.created_date}}</p>
+
+    <p style="font-style: italic">{{ obj.publish }}</p>
+    {% if obj.draft %}
+        <p style="color: red">Draft</p>
+    {% endif %}
 
 
 

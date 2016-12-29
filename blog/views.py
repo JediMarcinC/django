@@ -4,9 +4,11 @@ from .forms import PostForm
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from urllib.parse import quote_plus
+from django.db.models import Q
 
 
 def s(request):
@@ -20,8 +22,16 @@ def some(rq):
 
 def index(rqst):
     post_list = Post.objects.all().order_by('-created_date')
-    paginator = Paginator(post_list, 6) # Show 8 contacts per page
     page = rqst.GET.get('page')
+    query = rqst.GET.get('qry')
+    if query:
+        post_list = post_list.filter(
+            Q(title__icontains=query) |
+            Q(text__icontains=query) |
+            Q(author__first_name__icontains=query) |
+            Q(author__last_name__icontains=query)
+        )
+    paginator = Paginator(post_list, 6) # Show 8 contacts per page
     try:
         posts = paginator.page(page)
     except PageNotAnInteger:  # If page is not an integer, deliver first page.
@@ -53,8 +63,8 @@ def create_post(rqst):
         return HttpResponseRedirect(inst.get_absolute_url())
     return render(rqst, 'blog/postform.html', context)
 
-def update(request, id):
-    instance = get_object_or_404(Post, id=id)
+def update(request, slug):
+    instance = get_object_or_404(Post, slug=slug)
     form = PostForm(request.POST or None, request.FILES or None, instance=instance)
     if form.is_valid():
         inst = form.save(commit=False)
@@ -70,8 +80,8 @@ def update(request, id):
     }
     return render(request, 'blog/postform.html', context)
 
-def delete(request, id):
-    instance = get_object_or_404(Post, id=id)
+def delete(request, slug):
+    instance = get_object_or_404(Post, slug=slug)
     instance.delete()
     messages.success(request, 'Succesfully deleted')
     return redirect("posts:index")

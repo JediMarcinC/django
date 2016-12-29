@@ -10,4 +10,6 @@ class PostForm(forms.ModelForm):
             'text',
             'author',
             'image',
+            'draft',
+            'publish',
         ]

@@ -29,7 +29,7 @@
                         {% else %}
                             {{ obj.author }}
                         {% endif %}</b></h4>
-                <h3>{{ obj.text | truncatechars:30 }}</h3>
+                <h3 class="content-markdown">{{ obj.text }}</h3>
                 <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a>
                     <a href="{% url 'posts:edit' slug=obj.slug %}" class="btn btn-warning" role="button">Edit</a>
                     <a href="{% url 'posts:delete' slug=obj.slug %}" class="btn btn-danger" role="button">Delete</a></p>
@@ -42,7 +42,7 @@
 <div class="pagination">
     <span class="step-links">
         {% if objects.has_previous %}
-            <a href="?page={{ objects.previous_page_number }}">previous</a>
+            <a href="?page={{ objects.previous_page_number }}{% if request.GET.qry %}&qry={{request.GET.qry}}{% endif %}">previous</a>
         {% endif %}
 
         <span class="current">
@@ -50,7 +50,7 @@
         </span>
 
         {% if objects.has_next %}
-            <a href="?page={{ objects.next_page_number }}">next</a>
+            <a href="?page={{ objects.next_page_number }}{% if request.GET.qry %}&qry={{request.GET.qry}}{% endif %}">next</a>
         {% endif %}
     </span>
 </div>

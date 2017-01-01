@@ -29,8 +29,8 @@ class Post(models.Model):
     height_field = models.IntegerField(default=0)
     text = models.TextField()
     draft = models.BooleanField(default=False)
-    publish = models.DateField(auto_now=False, auto_now_add=False, default=timezone.now())
-    created_date = models.DateTimeField(default=timezone.now)
+    publish = models.DateField(auto_now=False, auto_now_add=False)
+    created_date = models.DateTimeField(auto_now=True, auto_now_add=False)
     """
     you're going to allow a field to be blank in your form,
     you're going to also need your database to allow NULL values for that field.

@@ -7,7 +7,7 @@ from django.contrib.auth import views as aviews
 from . import views as bv
 
 urlpatterns = [
-    url(r'^i/$', bv.index, name='index'),
+    url(r'^$', bv.index, name='index'),
     url(r'^demo/$', bv.demo),
     # url(r'^some/$', "blog.views.some"),
     url(r'^new/$', bv.create_post, name='new'),

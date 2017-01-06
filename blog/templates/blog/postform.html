@@ -1,18 +1,32 @@
 {% extends "blog/base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
 
-{% block title %} Form {% endblock %}
+{% block title %} Form {% endblock title%}
 
 {% block head_extra %}
 {{ form.media }}
 {% endblock head_extra %}
 
 {% block content %}
-<div class="col-sm-8 col-sm-offset-2">
-<h2>Form</h2>
-<form method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-<p>{{ form.as_p }}</p>
-<input type="submit" value="Create">
-</form>
+
+<div class="col-sm-offset-2 col-sm-8 col-sm-offset-2">
+    <div class="col-sm-6">
+        <h1>Preview</h1>
+        <div class="content-preview">
+            <h3 id="preview-title"></h3>
+            <p id="preview-content"></p>
+        </div>
+    </div>
+
+    <div class="col-sm-6">
+    <h2>Form</h2>
+    <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>{{ form|crispy }}</p>
+    <input type="submit" value="Create">
+    </form>
+    </div>
 </div>
-{% endblock %}
+
+{% endblock content %}

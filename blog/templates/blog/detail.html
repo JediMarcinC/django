@@ -39,11 +39,13 @@
 
     <div class='row'>
     <div class='col-sm-12'>
-        <div class="content-markdown">
-           <p>{{ obj.text }}</p>
+        <div class="post-detail-item">
+           <h2>{{ obj.get_markdown }}</h2>
         </div>
 
-
+        <div>
+            <h3>{{ obj.comment_set.all }}</h3>
+        </div>
         <div class="fb-comments" data-href={{ request.build_absolute_uri }} data-numposts="5"></div>
     </div>
     </div>

@@ -3,7 +3,10 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
+from django.utils.safestring import mark_safe
 from django.conf import settings
+
+from markdown_deux import markdown
 
 
 def upload_location(instance, filename):
@@ -49,6 +52,10 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse("posts:detail", kwargs={"slug": self.slug})
+
+    def get_markdown(self):
+        text = self.text
+        return mark_safe(markdown(text))
 
     class Meta:
         ordering = ['-created_date', 'title', ]

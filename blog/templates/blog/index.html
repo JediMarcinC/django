@@ -2,24 +2,30 @@
 {% block title %} Index {% endblock %}
 
 {% block content %}
-<div class="col-sm-12 col-sm-offset-2">
+<div class="col-sm-offset-4 col-sm-4 col-sm-offset-4">
     <div>
         <h5>Logged user: {{user}} authorized: {{user.is_staff}}</h5>
     </div>
 
-    <form method="GET" action="">
-        <input type="text" name="qry" value="{{ request.GET.qry }}" placeholder="search..."/>
-        <input type="submit" value="SEARCH!"/>
+    <form class=row method="GET" action="">
+        <div class="col-sm-8">
+            <div class="input-group">
+                <input class="form-control" type="text" name="qry" value="{{ request.GET.qry }}" placeholder="search..."/>
+                <span class="input-group-btn">
+                    <!--<input class="btn btn-default" type="submit" value="SEARCH!"/>-->
+                    <button class='btn btn-default' type='submit'>Search <i class="fa fa-search"></i></button>
+                </span>
+            </div>
+        </div>
     </form>
-
+{% for obj in objects %}
 <div class="row">
-    {% for obj in objects %}
-    <div class="col-sm-3">
+    <div class="col-sm-12">
         <div class="thumbnail">
             {% if obj.image %}
             <img src="{{ obj.image.url }}" class="image-responsive" style="max-height:150px">
             {% endif %}
-            <div class="caption">
+            <div class="caption post-detail-item">
                 <h2>
                     <a href="">{{ obj.title }}</a>
                     <small>{{ obj.created_date | timesince }} ago</small>
@@ -29,7 +35,8 @@
                         {% else %}
                             {{ obj.author }}
                         {% endif %}</b></h4>
-                <h3 class="content-markdown">{{ obj.text }}</h3>
+                <p>{{ obj.get_markdown|truncatewords_html:1 }}</p>
+
                 <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a>
                     <a href="{% url 'posts:edit' slug=obj.slug %}" class="btn btn-warning" role="button">Edit</a>
                     <a href="{% url 'posts:delete' slug=obj.slug %}" class="btn btn-danger" role="button">Delete</a></p>
@@ -39,6 +46,7 @@
     {% cycle '' '<div class="col-sm-12"><hr></div></div><div class="row">' %}
     {% endfor %}
 </div>
+
 <div class="pagination">
     <span class="step-links">
         {% if objects.has_previous %}

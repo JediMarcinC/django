@@ -1,5 +1,6 @@
 {% extends "blog/base.html" %}
 {% load urlify %}
+{% load crispy_forms_tags %}
 
 {% block title %} Object details {% endblock %}
 
@@ -43,14 +44,18 @@
            <h2>{{ obj.get_markdown }}</h2>
         </div>
 
-        <div>
+        <div style="font-size: 200%;">
             <p class="lead">Comments</p>
-            {% for comment in comments %}
-                <div class="">
-                   {{ comment.author.get_full_name }}, {{ comment.timestamp }} :
-                   <h4>{{ comment.content }}</h4>
-                    <hr>
-                </div>
+            <form method="POST" action="."> {% csrf_token %}
+                {{ comment_form|crispy}}
+                <input type="submit" value="Comment" class="btn btn-default ">
+            </form>
+
+            {% for comment in obj.comments %}
+                <blockquote>
+                  <p>{{ comment.content }}</p>
+                  <footer>{{ comment.author.get_full_name }}, <cite title="Source Title">{{ comment.timestamp }}</cite></footer>
+                </blockquote>
             {% endfor %}
         </div>
 

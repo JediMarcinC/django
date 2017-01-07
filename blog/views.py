@@ -8,9 +8,10 @@ from urllib.parse import quote_plus
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 
-from comments.models import Comment
+from comments.forms import CommentForm
 from .models import Post
 from .forms import PostForm
+from comments.models import Comment
 
 def s(request):
     return HttpResponse("<h1>Hello</h1>")
@@ -43,12 +44,37 @@ def index(rqst):
     return render(rqst, 'blog/index.html', {'objects': posts, 'user':rqst.user})
 
 
-def detail(rq, slug=None):
+def detail(request, slug=None):
     # object = Post.objects.get(id=id)
     object = get_object_or_404(Post, slug=slug)
     share_string = quote_plus(object.text)
-    comments = Comment.objects. filter_by_instance(object)
-    return render(rq, 'blog/detail.html', {'obj': object, 'share_string': share_string, 'comments': comments})
+    comments = object.comments #Comment.objects. filter_by_instance(object)
+    initial_data = {
+        'content_type': object.get_content_type,
+        'object_id': object.id
+    }
+    form = CommentForm(request.POST or None, initial=initial_data)
+    if form.is_valid():
+        print(form.cleaned_data) # sends CommentForm fields as dictionary
+        c_type = form.cleaned_data.get('content_type')
+        content_type = ContentType.objects.get(model=c_type)
+        obj_id = form.cleaned_data.get('object_id')
+        c_data = form.cleaned_data.get('content')
+        new_comment, created = Comment.objects.get_or_create(
+            author=request.user,
+            content_type=content_type,
+            object_id=obj_id,
+            content=c_data
+        )
+        if created:
+            print('>>>YEAH, it worked !***!')
+
+
+    return render(request, 'blog/detail.html', {'obj': object,
+                                                'share_string': share_string,
+                                                'comments': comments,
+                                                'comment_form': form,
+                                                })
 
 def create_post(rqst):
     if not rqst.user.is_staff and not rqst.user.is_superuser:

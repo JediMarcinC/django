@@ -1,6 +1,3 @@
-from .models import Post
-from .forms import PostForm
-
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404
@@ -9,7 +6,11 @@ from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from urllib.parse import quote_plus
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
 
+from comments.models import Comment
+from .models import Post
+from .forms import PostForm
 
 def s(request):
     return HttpResponse("<h1>Hello</h1>")
@@ -46,7 +47,8 @@ def detail(rq, slug=None):
     # object = Post.objects.get(id=id)
     object = get_object_or_404(Post, slug=slug)
     share_string = quote_plus(object.text)
-    return render(rq, 'blog/detail.html', {'obj': object, 'share_string': share_string})
+    comments = Comment.objects. filter_by_instance(object)
+    return render(rq, 'blog/detail.html', {'obj': object, 'share_string': share_string, 'comments': comments})
 
 def create_post(rqst):
     if not rqst.user.is_staff and not rqst.user.is_superuser:

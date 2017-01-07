@@ -9,6 +9,7 @@ from django.conf import settings
 from markdown_deux import markdown
 
 
+
 def upload_location(instance, filename):
     return "{}/{}".format(instance.title, filename)
 

@@ -8,6 +8,13 @@ $(document).ready(function(){
         $(this).addClass("img-responsive");
         });
 
+
+    $(".comment-reply-btn").click(function(event){
+        console.log(' --- event !!! ---');
+        event.preventDefault();
+        $(this).parent().next(".comment-reply").fadeToggle();  // parent for <a> is <footer>, next element is <div class="comment-reply">
+    });
+
     var titleInput = $("#id_title");
 
     function setTitle(value){
@@ -39,9 +46,7 @@ $(document).ready(function(){
         setContent(newContent);
     });
 
-    $(".comment-reply-btn").click(function(event){
-        event.preventDefault();  // don't run href
-        $(this).parent().next(".comment-reply").fadeToggle();   // parent for <a> is <footer>, next element is <div class="comment-reply">
-    });
+
+
 
 })

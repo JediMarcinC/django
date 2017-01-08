@@ -6,61 +6,82 @@
 
 {% block content %}
 <div class="col-sm-6 col-sm-offset-4">
-    <h1>{{ obj.title }}</h1>
-    <h3>
-        {% if obj.author.get_full_name %}
-            {{ obj.author.get_full_name }}
-        {% else %}
-            {{ obj.author }}
-        {% endif %} </h3>
+  <h1>{{ obj.title }}</h1>
+  <h3>
+    {% if obj.author.get_full_name %}
+    {{ obj.author.get_full_name }}
+    {% else %}
+    {{ obj.author }}
+    {% endif %} </h3>
 
-    <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/"
-         data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+  <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/"
+       data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
 
-    <img src="{{ obj.image.url }}" class="img-responsive" style="max-height:600px">
+  <img src="{{ obj.image.url }}" class="img-responsive" style="max-height:600px">
 
 
-    <p style="font-style: italic">{{ obj.publish }}</p>
-    {% if obj.draft %}
-        <p style="color: red">Draft</p>
-    {% endif %}
-    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
-        Facebook
-        </a>
+  <p style="font-style: italic">{{ obj.publish }}</p>
+  {% if obj.draft %}
+  <p style="color: red">Draft</p>
+  {% endif %}
+  <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}">
+    Facebook
+  </a>
 
-        <a href="https://twitter.com/home?status={{ obj.text|urlify }}%20{{ request.build_absolute_uri }}">
-        Twitter
-        </a>
+  <a href="https://twitter.com/home?status={{ obj.text|urlify }}%20{{ request.build_absolute_uri }}">
+    Twitter
+  </a>
 
-        <a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'>Google+</a>
+  <a href='https://plus.google.com/share?url={{ request.build_absolute_uri }}'>Google+</a>
 
-        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}
+  <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ request.build_absolute_uri }}
         &title={{ obj.title }}&summary={{ share_string }}&source=http://swiftforentrepreneurs.com/">
-        Linkedin</a>
+    Linkedin</a>
 
-    <div class='row'>
+  <div class='row'>
     <div class='col-sm-12'>
-        <div class="post-detail-item">
-           <h2>{{ obj.get_markdown }}</h2>
-        </div>
+      <div class="post-detail-item">
+        <h2>{{ obj.get_markdown }}</h2>
+      </div>
 
-        <div style="font-size: 200%;">
-            <p class="lead">Comments</p>
-            <form method="POST" action="."> {% csrf_token %}
-                {{ comment_form|crispy}}
-                <input type="submit" value="Comment" class="btn btn-default ">
-            </form>
+      <div>
+        <p class="lead">Comments</p>
+        <form method="POST" action="."> {% csrf_token %}
+          {{ comment_form|crispy}}
+          <input type="submit" value="Comment" class="btn btn-default ">
+        </form>
 
-            {% for comment in obj.comments %}
-                <blockquote>
-                  <p>{{ comment.content }}</p>
-                  <footer>{{ comment.author.get_full_name }}, <cite title="Source Title">{{ comment.timestamp }}</cite></footer>
-                </blockquote>
+        {% for comment in comments %}
+        <blockquote>
+          <p>{{ comment.content }}</p>
+          <footer>{{ comment.author.get_full_name }}, <cite title="Source Title">{{ comment.timestamp }}</cite>
+            {% if comment.children.count > 0 %}
+            | {{ comment.children.count }} comments
+            |<a class="comment-reply-btn" href="#"> Reply</a>
+            {% endif %}
+          </footer>
+
+          <div class="comment-reply">
+            {% for child_comment in comment.children %}
+              <blockquote>
+                <p>{{ child_comment.content }}</p>
+                <footer>{{ child_comment.author.get_full_name }}, <cite title="Source Title">{{ child_comment.timestamp }}</cite></footer>
+              </blockquote>
             {% endfor %}
-        </div>
+            <form method="POST" action="."> {% csrf_token %}
+              {{ comment_form|crispy}}
+              <input type="hidden" name="parent_id" value="{{ comment.id }}">
+              <input type="submit" value="Reply" class="btn btn-default ">
+            </form>
+          </div>
+
+
+        </blockquote>
+        {% endfor %}
+      </div>
 
     </div>
-    </div>
-    <a href="{% url 'posts:edit' slug=obj.slug %}" class="btn btn-warning" role="button">Edit</a>
+  </div>
+  <a href="{% url 'posts:edit' slug=obj.slug %}" class="btn btn-warning" role="button">Edit</a>
 </div>
 {% endblock %}

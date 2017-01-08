@@ -48,7 +48,7 @@ def detail(request, slug=None):
     # object = Post.objects.get(id=id)
     object = get_object_or_404(Post, slug=slug)
     share_string = quote_plus(object.text)
-    comments = object.comments #Comment.objects. filter_by_instance(object)
+
     initial_data = {
         'content_type': object.get_content_type,
         'object_id': object.id
@@ -60,15 +60,29 @@ def detail(request, slug=None):
         content_type = ContentType.objects.get(model=c_type)
         obj_id = form.cleaned_data.get('object_id')
         c_data = form.cleaned_data.get('content')
+
+        parent_obj = None
+        try:
+            parent_id = int(request.POST.get("parent_id"))
+        except:
+            parent_id = None
+        if parent_id:
+            parent_qs = Comment.objects.filter(id=parent_id)
+            if parent_qs.exists() and parent_qs.count() == 1:
+                parent_obj = parent_qs.first()
+
+
         new_comment, created = Comment.objects.get_or_create(
             author=request.user,
             content_type=content_type,
             object_id=obj_id,
-            content=c_data
-        )
-        if created:
-            print('>>>YEAH, it worked !***!')
+            content=c_data,
+            parent=parent_obj,
 
+        )
+        return HttpResponseRedirect(new_comment.content_object.get_absolute_url())
+
+    comments = object.comments # = (def @prop) Comment.objects. filter_by_instance(object)
 
     return render(request, 'blog/detail.html', {'obj': object,
                                                 'share_string': share_string,

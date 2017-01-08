@@ -44,4 +44,5 @@ $(document).ready(function(){
         $(this).parent().next(".comment-reply").fadeToggle();   // parent for <a> is <footer>, next element is <div class="comment-reply">
     });
 
+
 })
